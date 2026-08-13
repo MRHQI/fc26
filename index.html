@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>مزاد إف سي 26</title>
+  <style>
+    body {
+      background-color: #ffd700;
+      font-family: 'Tahoma', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      color: #000;
+    }
+
+    .screen {
+      display: none;
+      max-width: 650px;
+      margin: auto;
+      background: #ffd700;
+      padding: 20px;
+      position: relative;
+    }
+
+    .active-screen {
+      display: block;
+    }
+
+    /* زر الرجوع للخلف في الزاوية */
+    .back-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: #e6c200;
+      color: #000;
+      border: 2px solid #b89700;
+      padding: 6px 14px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: 0.2s;
+    }
+
+    .back-btn:hover {
+      background-color: #cca300;
+      transform: translateY(-2px);
+    }
+
+    .box {
+      background-color: #e6c200;
+      border: 3px solid #b89700;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    h1, h2 {
+      color: #000;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 12px;
+      margin: 10px;
+      width: 80%;
+      border-radius: 8px;
+      border: 2px solid #b89700;
+      background: #fff;
+      font-size: 16px;
+      text-align: center;
+      outline: none;
+    }
+
+    button {
+      background-color: #e6c200;
+      color: #000;
+      border: 3px solid #b89700;
+      padding: 12px 25px;
+      margin: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: #cca300;
+      transform: translateY(-2px);
+    }
+
+    /* تنسيق إدخال الميزانية مع زر اختيار الوحدة (M/K) للشاشة الثانية فقط */
+    .input-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      margin: 10px 0;
+    }
+
+    .input-group input {
+      width: 60%;
+      margin: 0;
+    }
+
+    .input-group select {
+      width: 25%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 2px solid #b89700;
+      background: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* شاشة القائمة المقسومة نصين */
+    .split-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .player-section {
+      flex: 1;
+      background-color: #e6c200;
+      border: 3px solid #b89700;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .player-section input {
+      width: 90%;
+      padding: 8px;
+      margin: 5px 0;
+    }
+
+    .player-section button {
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الشاشة الأولى: إدخال أسامي اللاعبين -->
+  <div id="screen1" class="screen active-screen">
+    <div class="box">
+      <h1>إعداد اللعبة</h1>
+      <p>أدخل أسماء اللاعبين المشاركين</p>
+      <input type="text" id="p1Input"><br>
+      <input type="text" id="p2Input"><br>
+      <button onclick="goToBudgetScreen()">التالي: تحديد الميزانية</button>
+    </div>
+  </div>
+
+  <!-- الشاشة الثانية: تحديد الميزانية -->
+  <div id="screen2" class="screen">
+    <button class="back-btn" onclick="goBackToScreen1()">رجوع</button>
+    <div class="box">
+      <h1>تحديد الميزانية</h1>
+      <p>حدد الميزانية الابتدائية لكل لاعب</p>
+      <div class="input-group">
+        <select id="budgetUnit">
+          <option value="M">M</option>
+          <option value="K">K</option>
+        </select>
+        <input type="number" id="budgetInput">
+      </div>
+      <button onclick="startMainGame()">بدء النكح والرشوة</button>
+    </div>
+  </div>
+
+  <!-- الشاشة الرئيسية: مقسومة بالنص لكل لاعب -->
+  <div id="screen3" class="screen">
+    <button class="back-btn" onclick="goBackToScreen2()">رجوع</button>
+    <div class="box" style="margin-bottom: 10px; padding: 15px;">
+      <h2>بسم الله توكلنا علي الله</h2>
+    </div>
+
+    <div class="split-container">
+      <!-- قسم اللاعب الأول -->
+      <div class="player-section">
+        <h2 id="p1Title">اللاعب 1</h2>
+        <p>الميزانية المتبقية:</p>
+        <h1 id="p1BudgetDisp" style="color: #000;">0</h1>
+        <hr style="border: 1px solid #b89700;">
+        <input type="text" id="p1DeductAmount">
+        <button id="p1Btn" onclick="deductBudget(1)">خصم</button>
+      </div>
+
+      <!-- قسم اللاعب الثاني -->
+      <div class="player-section">
+        <h2 id="p2Title">اللاعب 2</h2>
+        <p>الميزانية المتبقية:</p>
+        <h1 id="p2BudgetDisp" style="color: #000;">0</h1>
+        <hr style="border: 1px solid #b89700;">
+        <input type="text" id="p2DeductAmount">
+        <button id="p2Btn" onclick="deductBudget(2)">خصم</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let p1Name = "اللاعب 1";
+    let p2Name = "اللاعب 2";
+    let p1Budget = 0;
+    let p2Budget = 0;
+
+    function calculateValue(num, unit) {
+      if (isNaN(num) || num <= 0) return 0;
+      if (unit === 'M') {
+        return num * 1000000;
+      } else if (unit === 'K') {
+        return num * 1000;
+      }
+      return num;
+    }
+
+    function parseInputAmount(inputStr) {
+      if (!inputStr) return 0;
+      inputStr = inputStr.trim().toLowerCase();
+      let multiplier = 1000000; 
+      
+      if (inputStr.endsWith('m')) {
+        multiplier = 1000000;
+        inputStr = inputStr.slice(0, -1);
+      } else if (inputStr.endsWith('k')) {
+        multiplier = 1000;
+        inputStr = inputStr.slice(0, -1);
+      }
+      
+      let num = parseFloat(inputStr);
+      if (isNaN(num) || num <= 0) return 0;
+      return num * multiplier;
+    }
+
+    function formatValue(num) {
+      if (num >= 1000000 && num % 1000000 === 0) {
+        return (num / 1000000) + "M";
+      } else if (num >= 1000 && num % 1000 === 0) {
+        return (num / 1000) + "K";
+      } else if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + "M";
+      } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + "K";
+      }
+      return num.toString();
+    }
+
+    function goToBudgetScreen() {
+      let input1 = document.getElementById("p1Input").value.trim();
+      let input2 = document.getElementById("p2Input").value.trim();
+      
+      if(input1) p1Name = input1;
+      if(input2) p2Name = input2;
+
+      document.getElementById("screen1").classList.remove("active-screen");
+      document.getElementById("screen2").classList.add("active-screen");
+    }
+
+    function goBackToScreen1() {
+      document.getElementById("screen2").classList.remove("active-screen");
+      document.getElementById("screen1").classList.add("active-screen");
+    }
+
+    function goBackToScreen2() {
+      document.getElementById("screen3").classList.remove("active-screen");
+      document.getElementById("screen2").classList.add("active-screen");
+    }
+
+    function startMainGame() {
+      let bNum = parseFloat(document.getElementById("budgetInput").value);
+      let bUnit = document.getElementById("budgetUnit").value;
+      let bVal = calculateValue(bNum, bUnit);
+      
+      if(bVal > 0) {
+        p1Budget = bVal;
+        p2Budget = bVal;
+      } else {
+        p1Budget = 200000000; 
+        p2Budget = 200000000;
+      }
+
+      document.getElementById("p1Title").innerText = p1Name;
+      document.getElementById("p2Title").innerText = p2Name;
+      document.getElementById("p1BudgetDisp").innerText = formatValue(p1Budget);
+      document.getElementById("p2BudgetDisp").innerText = formatValue(p2Budget);
+      
+      document.getElementById("p1Btn").innerText = "خصم من " + p1Name;
+      document.getElementById("p2Btn").innerText = "خصم من " + p2Name;
+
+      document.getElementById("screen2").classList.remove("active-screen");
+      document.getElementById("screen3").classList.add("active-screen");
+    }
+
+    function deductBudget(playerNum) {
+      if(playerNum === 1) {
+        let rawVal = document.getElementById("p1DeductAmount").value;
+        let amount = parseInputAmount(rawVal);
+        
+        if(amount <= 0) {
+          alert("الرجاء إدخال مبلغ صحيح!");
+          return;
+        }
+        if(p1Budget < amount) {
+          alert("الميزانية لا تكفي!");
+          return;
+        }
+        p1Budget -= amount;
+        document.getElementById("p1BudgetDisp").innerText = formatValue(p1Budget);
+        document.getElementById("p1DeductAmount").value = "";
+        alert(`تم خصم المبلغ من ${p1Name}. أصبحت ميزانيته ${formatValue(p1Budget)}, وبقي ${p2Name} كما هو (${formatValue(p2Budget)}).`);
+      } else {
+        let rawVal = document.getElementById("p2DeductAmount").value;
+        let amount = parseInputAmount(rawVal);
+        
+        if(amount <= 0) {
+          alert("الرجاء إدخال مبلغ صحيح!");
+          return;
+        }
+        if(p2Budget < amount) {
+          alert("الميزانية لا تكفي!");
+          return;
+        }
+        p2Budget -= amount;
+        document.getElementById("p2BudgetDisp").innerText = formatValue(p2Budget);
+        document.getElementById("p2DeductAmount").value = "";
+        alert(`تم خصم المبلغ من ${p2Name}. أصبحت ميزانيته ${formatValue(p2Budget)}, وبقي ${p1Name} كما هو (${formatValue(p1Budget)}).`);
+      }
+    }
+  </script>
+
+</body>
+</html>
